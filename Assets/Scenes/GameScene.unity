@@ -20244,12 +20244,12 @@ MonoBehaviour:
   triggerCondition: 0
   moveDirection: {x: -1, y: 0}
   movementSpeed: 7
-  activationDistance: 3.37
+  activationDistance: 3.13
   maxMoveDistance: 1.79
   popCount: 4
   popSpacing: 0.5
   popDelay: 0.15
-  chaseSpeed: 4
+  chaseSpeed: 3.88
   safeBlockTarget: {fileID: 1610774863}
   trollMoveSpeed: 15
 --- !u!61 &1601629835

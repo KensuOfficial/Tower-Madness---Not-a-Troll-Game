@@ -87,7 +87,6 @@ public class SpikeTrap : MonoBehaviour
                 break;
 
             case TriggerCondition.OnPlayerExit:
-                // Tracks when player crosses into the zone and then leaves it
                 if (playerCurrentlyInRadius)
                 {
                     playerWasInRadius = true;
@@ -100,7 +99,6 @@ public class SpikeTrap : MonoBehaviour
                 break;
         }
 
-        // Run movement behaviors if conditions are met
         if (shouldExecuteTrapBehavior)
         {
             ExecuteTrapMovement(distanceToPlayer);
@@ -145,29 +143,32 @@ public class SpikeTrap : MonoBehaviour
     private IEnumerator SpawnContinuousPoppingSequence()
     {
         isPoppingSequenceActive = true;
-
-        // Custom Direction calculation for the sequential trail setup
         Vector3 spawnStepVector = (Vector3)moveDirection.normalized * popSpacing;
 
         for (int i = 1; i <= popCount; i++)
         {
             yield return new WaitForSeconds(popDelay);
 
-            // Compute exact sequential coordinate path location
             Vector3 spawnPosition = transform.position + (spawnStepVector * i);
-
             GameObject duplicateSpike = Instantiate(gameObject, spawnPosition, transform.rotation);
 
-            // Clean components off clones to prevent endless stacking
+            // Give clones a special temporary name to track and destroy them cleanly
+            duplicateSpike.name = "ContinuousSpikeClone_Troll";
+
+            // Remove the main master script to avoid infinite duplication glitches
             SpikeTrap cloneScript = duplicateSpike.GetComponent<SpikeTrap>();
             if (cloneScript != null) Destroy(cloneScript);
 
-            // Ensure clones match master visibility state properties perfectly
+            // FIX: Add a tiny helper proxy component to the clone so it can kill the player on touch!
+            duplicateSpike.AddComponent<SpikeCloneKiller>();
+
+            // Match master visual colors perfectly
             SpriteRenderer cloneSprite = duplicateSpike.GetComponent<SpriteRenderer>();
             if (cloneSprite != null && mainSpriteRenderer != null)
             {
                 cloneSprite.sprite = mainSpriteRenderer.sprite;
                 cloneSprite.color = mainSpriteRenderer.color;
+                cloneSprite.sortingOrder = mainSpriteRenderer.sortingOrder;
             }
         }
     }
@@ -181,17 +182,13 @@ public class SpikeTrap : MonoBehaviour
         distanceTraveled = 0f;
         transform.position = initialPosition;
 
-        // Wipe out clone instances upon scene death recovery transition cycles
-        if (trapType == SpikeType.Continuous)
+        // FIX: Find and delete all active cloned popping spikes in the scene
+        GameObject[] allObjects = GameObject.FindObjectsByType<GameObject>();
+        foreach (GameObject obj in allObjects)
         {
-            // Simple clean wipe search for unscripted dynamic copies around scene tracking spaces
-            GameObject[] duplicates = GameObject.FindGameObjectsWithTag(gameObject.tag);
-            foreach (GameObject dup in duplicates)
+            if (obj.name == "ContinuousSpikeClone_Troll")
             {
-                if (dup != gameObject && dup.name.Contains("(Clone)"))
-                {
-                    Destroy(dup);
-                }
+                Destroy(obj);
             }
         }
 
@@ -216,7 +213,6 @@ public class SpikeTrap : MonoBehaviour
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, activationDistance);
 
-        // Visual preview guide vectors for direction paths
         if (trapType == SpikeType.CustomizableMove || trapType == SpikeType.Falling)
         {
             Gizmos.color = Color.green;
@@ -228,6 +224,19 @@ public class SpikeTrap : MonoBehaviour
             Gizmos.color = Color.cyan;
             Vector3 finalPopPosition = transform.position + (Vector3)(moveDirection.normalized * (popCount * popSpacing));
             Gizmos.DrawLine(transform.position, finalPopPosition);
+        }
+    }
+}
+
+// === FIX COMPONENT FOR CLONES ===
+// This tiny script automatically sits on duplicated spikes to ensure they keep tracking player death boxes!
+public class SpikeCloneKiller : MonoBehaviour
+{
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Player"))
+        {
+            GameManager.Instance.RespawnPlayer();
         }
     }
 }
