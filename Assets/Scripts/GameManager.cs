@@ -7,6 +7,9 @@ public class GameManager : MonoBehaviour
 
     [Header("Player Settings")]
     public Transform playerTransform;
+    private MonoBehaviour playerMovementScript;
+    private Animator playerAnimator;
+    private SpriteRenderer playerSpriteRenderer;
 
     [Header("Floor Management")]
     public Transform[] floorSpawnPoints;
@@ -16,6 +19,11 @@ public class GameManager : MonoBehaviour
     [Header("UI Reference")]
     public CanvasGroup fadeCanvasGroup;
     public float fadeDuration = 0.5f;
+
+    [Header("Death Settings")]
+    [Tooltip("How many seconds to wait AFTER hitting a trap BEFORE the player teleports back")]
+    public float respawnDelay = 1.0f;
+    private bool isDying = false;
 
     private void Awake()
     {
@@ -32,9 +40,16 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        if (playerTransform != null && floorSpawnPoints.Length > 0)
+        if (playerTransform != null)
         {
-            SetFloor(0);
+            playerMovementScript = playerTransform.GetComponent("PlayerMovement") as MonoBehaviour;
+            playerAnimator = playerTransform.GetComponent<Animator>();
+            playerSpriteRenderer = playerTransform.GetComponent<SpriteRenderer>();
+
+            if (floorSpawnPoints.Length > 0)
+            {
+                SetFloor(0);
+            }
         }
     }
 
@@ -51,23 +66,31 @@ public class GameManager : MonoBehaviour
 
     public void RespawnPlayer()
     {
-        if (playerTransform != null)
+        if (isDying) return;
+        StartCoroutine(ExecuteDeathSequence());
+    }
+
+    private IEnumerator ExecuteDeathSequence()
+    {
+        isDying = true;
+
+        // 1. FREEZE PLAYER PHYSICS & CONTROLS
+        if (playerMovementScript != null) playerMovementScript.enabled = false;
+        Rigidbody2D rb = playerTransform.GetComponent<Rigidbody2D>();
+        if (rb != null)
         {
-            playerTransform.position = activeCheckpointPosition;
-            Rigidbody2D rb = playerTransform.GetComponent<Rigidbody2D>();
-            if (rb != null) rb.linearVelocity = Vector2.zero;
+            rb.linearVelocity = Vector2.zero;
+            rb.bodyType = RigidbodyType2D.Kinematic;
         }
-    }
 
-    public void ProgressToNextFloor()
-    {
-        Debug.Log("ProgressToNextFloor was called successfully!");
-        StartCoroutine(FadeAndAdvanceFloor());
-    }
+        // 2. PAUSE ANIMATIONS
+        if (playerAnimator != null) playerAnimator.speed = 0f;
+        if (playerSpriteRenderer != null) playerSpriteRenderer.color = Color.red;
 
-    private IEnumerator FadeAndAdvanceFloor()
-    {
-        // 1. Fade out to black safely
+        // 3. THE COOLDOWN DELAY
+        yield return new WaitForSeconds(respawnDelay);
+
+        // 4. FADE TO BLACK
         if (fadeCanvasGroup != null)
         {
             float timer = 0f;
@@ -80,23 +103,115 @@ public class GameManager : MonoBehaviour
             fadeCanvasGroup.alpha = 1f;
         }
 
-        // 2. FORCE TELEPORT (This runs even if the Canvas layout above has an issue!)
-        currentFloorIndex++;
-        Debug.Log("Moving Player to Floor Index: " + currentFloorIndex);
+        // === RESET ALL ACTIVE TRAPS HERE WHILE SCREEN IS BLACK ===
+        SpikeTrap[] allTraps = FindObjectsByType<SpikeTrap>();
 
-        if (currentFloorIndex < floorSpawnPoints.Length)
+        foreach (SpikeTrap trap in allTraps)
         {
-            SetFloor(currentFloorIndex);
-            RespawnPlayer();
+            if (trap != null)
+            {
+                trap.ResetTrap();
+            }
         }
-        else
+        // =========================================================
+
+        // 5. TELEPORT AND RESET VISUAL ORIENTATION
+        playerTransform.position = activeCheckpointPosition;
+        if (playerSpriteRenderer != null)
         {
-            Debug.Log("Level Complete! Reached the final floor.");
+            playerSpriteRenderer.color = Color.white;
+            playerSpriteRenderer.flipX = false;
+        }
+
+        // 6. SAFE ANIMATION RESET
+        if (playerAnimator != null)
+        {
+            playerAnimator.speed = 1f;
+            foreach (var parameter in playerAnimator.parameters)
+            {
+                if (parameter.type == AnimatorControllerParameterType.Float)
+                    playerAnimator.SetFloat(parameter.name, 0f);
+                else if (parameter.type == AnimatorControllerParameterType.Bool)
+                    playerAnimator.SetBool(parameter.name, false);
+            }
         }
 
         yield return new WaitForSeconds(0.2f);
 
-        // 3. Fade back in safely
+        // 7. FADE BACK IN
+        if (fadeCanvasGroup != null)
+        {
+            float timer = fadeDuration;
+            while (timer > 0f)
+            {
+                timer -= Time.deltaTime;
+                fadeCanvasGroup.alpha = timer / fadeDuration;
+                yield return null;
+            }
+            fadeCanvasGroup.alpha = 0f;
+        }
+
+        // 8. UNFREEZE PLAYER
+        if (rb != null)
+        {
+            rb.bodyType = RigidbodyType2D.Dynamic;
+            rb.linearVelocity = Vector2.zero;
+        }
+        if (playerMovementScript != null) playerMovementScript.enabled = true;
+
+        isDying = false;
+    }
+
+
+    public void ProgressToNextFloor()
+    {
+        StartCoroutine(FadeAndAdvanceFloor());
+    }
+
+    private IEnumerator FadeAndAdvanceFloor()
+    {
+        // Face the exit door direction (Right) before transitioning
+        if (playerSpriteRenderer != null)
+        {
+            playerSpriteRenderer.flipX = false;
+        }
+
+        if (playerAnimator != null)
+        {
+            // Safely clear parameters for smooth transition entry
+            foreach (var parameter in playerAnimator.parameters)
+            {
+                if (parameter.type == AnimatorControllerParameterType.Float)
+                    playerAnimator.SetFloat(parameter.name, 0f);
+                else if (parameter.type == AnimatorControllerParameterType.Bool)
+                    playerAnimator.SetBool(parameter.name, false);
+            }
+        }
+
+        if (fadeCanvasGroup != null)
+        {
+            float timer = 0f;
+            while (timer < fadeDuration)
+            {
+                timer += Time.deltaTime;
+                fadeCanvasGroup.alpha = timer / fadeDuration;
+                yield return null;
+            }
+            fadeCanvasGroup.alpha = 1f;
+        }
+
+        currentFloorIndex++;
+        if (currentFloorIndex < floorSpawnPoints.Length)
+        {
+            SetFloor(currentFloorIndex);
+            playerTransform.position = activeCheckpointPosition;
+
+            Rigidbody2D rb = playerTransform.GetComponent<Rigidbody2D>();
+            if (rb != null) rb.linearVelocity = Vector2.zero;
+        }
+
+        yield return new WaitForSeconds(0.2f);
+
         if (fadeCanvasGroup != null)
         {
             float timer = fadeDuration;
