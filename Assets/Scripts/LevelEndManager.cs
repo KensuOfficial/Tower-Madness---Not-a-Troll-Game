@@ -7,24 +7,33 @@ public class LevelEndManager : MonoBehaviour
     public static LevelEndManager Instance;
 
     [Header("UI Canvas Panel References")]
-    [SerializeField] private CanvasGroup globalFadeCanvasGroup;
-    [SerializeField] private GameObject levelCompleteOptionsMenu;
-
-    [Header("Transition Settings")]
-    [SerializeField] private float fadeDuration = 0.8f;
-    [Tooltip("Type the exact scene name here (Case-Sensitive, No extension)")]
-    [SerializeField] private string nextLevelSceneName = "Level_02";
+    public CanvasGroup globalFadeCanvasGroup;
+    private GameObject levelCompleteOptionsMenu; // Set dynamically by LevelSceneConnector
 
     private bool isEndingLevel = false;
 
     private void Awake()
     {
-        if (Instance == null) Instance = this;
-        else Destroy(gameObject);
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    // Called automatically by LevelSceneConnector on scene boot
+    public void RegisterSceneMenu(GameObject sceneMenu)
+    {
+        isEndingLevel = false; // Reset level progression state barrier checks completely
+        levelCompleteOptionsMenu = sceneMenu;
 
         if (levelCompleteOptionsMenu != null)
         {
-            levelCompleteOptionsMenu.SetActive(false);
+            levelCompleteOptionsMenu.SetActive(false); // Force hide it by default
         }
     }
 
@@ -38,28 +47,34 @@ public class LevelEndManager : MonoBehaviour
     {
         isEndingLevel = true;
 
-        // 1. HARD TIME SCALE FREEZE
-        // This stops your player script loops, rigidbodies, and animators dead in their tracks!
+        // 1. PAUSE GLOBAL TIME
         Time.timeScale = 0f;
 
-        // 2. FORCE STOP PLAYER AUDIO CHANNELS IMMEDIATELY
+        // 2. FORCE STOP PLAYER AUDIO
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null)
         {
             AudioSource[] playerAudioChannels = player.GetComponents<AudioSource>();
             foreach (AudioSource source in playerAudioChannels)
             {
-                if (source != null) source.Stop(); // Kills any running footsteps or jump clips instantly
+                if (source != null) source.Stop();
             }
         }
 
-        // 3. FADE CAMERA TO SOLID BLACK (Must use Realtime because timeScale is 0!)
+        // 3. REUSE THE DYNAMIC FADE OVERLAY SYSTEM
+        if (GameManager.Instance != null && GameManager.Instance.fadeCanvasGroup != null)
+        {
+            globalFadeCanvasGroup = GameManager.Instance.fadeCanvasGroup;
+        }
+
+        // 4. FADE CAMERA TO SOLID BLACK
         if (globalFadeCanvasGroup != null)
         {
             float timer = 0f;
+            float fadeDuration = GameManager.Instance != null ? GameManager.Instance.fadeDuration : 0.5f;
             while (timer < fadeDuration)
             {
-                timer += Time.unscaledDeltaTime; // Ignores the game freeze to process the fade animations
+                timer += Time.unscaledDeltaTime;
                 globalFadeCanvasGroup.alpha = timer / fadeDuration;
                 yield return null;
             }
@@ -68,20 +83,21 @@ public class LevelEndManager : MonoBehaviour
 
         yield return new WaitForSecondsRealtime(0.2f);
 
-        // 4. ACTIVATE OPTIONS WINDOW OVERLAY
+        // 5. ACTIVATE THE SELECTION OVERLAY MENU
         if (levelCompleteOptionsMenu != null)
         {
             levelCompleteOptionsMenu.SetActive(true);
         }
 
-        // 5. FADE BLACK BACK OUT
+        // 6. FADE BLACK BACK OUT
         if (globalFadeCanvasGroup != null)
         {
-            float timer = fadeDuration;
+            float timer = GameManager.Instance != null ? GameManager.Instance.fadeDuration : 0.5f;
+            float maxTime = timer;
             while (timer > 0f)
             {
                 timer -= Time.unscaledDeltaTime;
-                globalFadeCanvasGroup.alpha = timer / fadeDuration;
+                globalFadeCanvasGroup.alpha = timer / maxTime;
                 yield return null;
             }
             globalFadeCanvasGroup.alpha = 0f;
@@ -91,22 +107,17 @@ public class LevelEndManager : MonoBehaviour
     public void LoadNextLevel()
     {
         Time.timeScale = 1f;
-
-        // This automatically pulls the index number of whatever scene is currently open, 
-        // adds 1 to it, and loads whatever file is resting next in your Build Settings window list!
         int nextSceneBuildIndex = SceneManager.GetActiveScene().buildIndex + 1;
 
-        // Safe check to ensure we aren't trying to load past the end of your build list profiles
         if (nextSceneBuildIndex < SceneManager.sceneCountInBuildSettings)
         {
             SceneManager.LoadScene(nextSceneBuildIndex);
         }
         else
         {
-            Debug.LogError("There is no scene following this one inside your Build Settings window list!");
+            Debug.LogError("No scene following this one inside your Build Settings list!");
         }
     }
-
 
     public void GoToHomeMenu()
     {

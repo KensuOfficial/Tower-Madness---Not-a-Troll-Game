@@ -12,19 +12,13 @@ public class LevelDoor : MonoBehaviour
         {
             if (isFinalLevelExit)
             {
-                // Trigger the end-of-level options menu screen
                 if (LevelEndManager.Instance != null)
                 {
                     LevelEndManager.Instance.ShowLevelCompleteScreen();
                 }
-                else
-                {
-                    Debug.LogError("LevelEndManager is missing from your scene hierarchy!");
-                }
             }
             else
             {
-                // Standard behavior: go up to the next floor layer
                 GameManager.Instance.ProgressToNextFloor();
             }
         }

@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -27,14 +28,88 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
+        // SINGLETON CLEANUP
         if (Instance == null)
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
+
+            // Subscribe to Unity's scene loading system event matrix
+            SceneManager.sceneLoaded += OnSceneLoadedRefresh;
         }
         else
         {
             Destroy(gameObject);
+        }
+    }
+    private void OnDestroy()
+    {
+        // Unsubscribe when destroyed to avoid memory leak tracking errors
+        SceneManager.sceneLoaded -= OnSceneLoadedRefresh;
+    }
+    // THIS METHOD AUTOMATICALLY RUNS THE FRAME A NEW SCENE LOADS
+    private void OnSceneLoadedRefresh(Scene scene, LoadSceneMode mode)
+    {
+        Debug.Log("New Scene Loaded: " + scene.name + ". Refreshing Manager Connections!");
+
+        // 1. Automatically find the new Level's Player frog via Tag
+        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+        if (playerObj != null)
+        {
+            playerTransform = playerObj.transform;
+            playerMovementScript = playerTransform.GetComponent("PlayerMovement") as MonoBehaviour;
+            playerAnimator = playerTransform.GetComponent<Animator>();
+            playerSpriteRenderer = playerTransform.GetComponent<SpriteRenderer>();
+        }
+
+        // 2. Automatically locate the new Level's Canvas Group Fade Overlay
+        // FIX: Find the overlay even if your level designer turned it off by default!
+        fadeCanvasGroup = null; // Clear out old Level 1 reference residue
+
+        CanvasGroup[] allCanvasGroupsInScene = Resources.FindObjectsOfTypeAll<CanvasGroup>();
+        foreach (CanvasGroup group in allCanvasGroupsInScene)
+        {
+            // Specifically verify name matches your layout file asset structure
+            if (group.gameObject.name == "FadeOverlay")
+            {
+                fadeCanvasGroup = group;
+
+                // Safety Enforcement: Make sure the image itself is active, 
+                // but its Alpha transparency opacity is set to invisible (0) on boot!
+                fadeCanvasGroup.gameObject.SetActive(true);
+                fadeCanvasGroup.alpha = 0f;
+                break;
+            }
+        }
+
+        if (fadeCanvasGroup == null)
+        {
+            Debug.LogError("GameManager failed to locate an object named 'FadeOverlay' in the new scene!");
+        }
+        
+        // 3. Reset floor indices so Level 2 doesn't look for Floor 4!
+        currentFloorIndex = 0;
+
+        // 4. Locate your new floor spawn markers dynamically inside the new scene layout
+        // To make this robust for your level designer, we look for objects named Floor1_Start, etc.
+        GameObject f1 = GameObject.Find("Floor1_Start");
+        GameObject f2 = GameObject.Find("Floor2_Start");
+        GameObject f3 = GameObject.Find("Floor3_Start");
+
+        int count = 0;
+        if (f1 != null) count++;
+        if (f2 != null) count++;
+        if (f3 != null) count++;
+
+        if (count > 0)
+        {
+            floorSpawnPoints = new Transform[count];
+            int idx = 0;
+            if (f1 != null) floorSpawnPoints[idx++] = f1.transform;
+            if (f2 != null) floorSpawnPoints[idx++] = f2.transform;
+            if (f3 != null) floorSpawnPoints[idx++] = f3.transform;
+
+            SetFloor(0);
         }
     }
 
