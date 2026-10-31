@@ -2,9 +2,31 @@ using UnityEngine;
 
 public class LevelDoor : MonoBehaviour
 {
+    [Header("Door Configuration")]
+    [Tooltip("Check this TRUE only on the very last door of the entire multi-floor level!")]
+    [SerializeField] private bool isFinalLevelExit = false;
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        // EMERGENCY TEST: If ANY object overlaps this door, jump straight to the change
-        GameManager.Instance.ProgressToNextFloor();
+        if (collision.CompareTag("Player"))
+        {
+            if (isFinalLevelExit)
+            {
+                // Trigger the end-of-level options menu screen
+                if (LevelEndManager.Instance != null)
+                {
+                    LevelEndManager.Instance.ShowLevelCompleteScreen();
+                }
+                else
+                {
+                    Debug.LogError("LevelEndManager is missing from your scene hierarchy!");
+                }
+            }
+            else
+            {
+                // Standard behavior: go up to the next floor layer
+                GameManager.Instance.ProgressToNextFloor();
+            }
+        }
     }
 }

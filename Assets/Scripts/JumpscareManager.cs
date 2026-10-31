@@ -18,50 +18,96 @@ public class JumpscareManager : MonoBehaviour
     [SerializeField] private AudioSource backgroundMusicSource;
 
     private VideoPlayer videoPlayerProcessor;
-    private bool isScaring = false;
+    private bool isVisualScareActive = false;
     private MonoBehaviour playerMovementScript;
+
+    // Track active background audio sequences so we can kill them instantly on overlap
+    private Coroutine activeAudioCoroutine;
 
     private void Awake()
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
 
-        // Clear out visibility loops by default
         if (fullscreenUIPanel != null) fullscreenUIPanel.SetActive(false);
         if (customizedUIPanel != null) customizedUIPanel.SetActive(false);
 
         if (videoUIPanel != null)
         {
             videoPlayerProcessor = videoUIPanel.GetComponent<VideoPlayer>();
-
-            // Clear memory buffer artifacts immediately on boot
             if (videoPlayerProcessor != null && videoPlayerProcessor.targetTexture != null)
             {
                 videoPlayerProcessor.targetTexture.Release();
             }
-
             videoUIPanel.SetActive(false);
         }
     }
 
     public void TriggerScare(VisualType type, GameObject customUIPanelOverride, AudioClip soundToPlay, VideoClip videoToPlay, float duration, bool pauseGame, bool muteBGM)
     {
-        if (isScaring) return;
-        StartCoroutine(ExecuteScareSequence(type, customUIPanelOverride, soundToPlay, videoToPlay, duration, pauseGame, muteBGM));
+        // 1. IF AUDIO ONLY: Track and execute separately
+        if (type == VisualType.AudioOnly)
+        {
+            // If another ambient audio was already running, stop it first before starting a new one
+            if (activeAudioCoroutine != null) StopCoroutine(activeAudioCoroutine);
+            activeAudioCoroutine = StartCoroutine(ExecuteAudioOnlyQueue(soundToPlay, duration, muteBGM));
+            return;
+        }
+
+        // 2. IF VISUAL OVERRIDE: Instantly kill any running ambient track so they never overlap!
+        if (activeAudioCoroutine != null)
+        {
+            StopCoroutine(activeAudioCoroutine);
+            activeAudioCoroutine = null;
+        }
+        if (jumpscareAudioSource != null && jumpscareAudioSource.isPlaying)
+        {
+            jumpscareAudioSource.Stop(); // Cleanly cuts the running audio tail right here
+        }
+
+        // Prevent dual visual clip overlaps
+        if (isVisualScareActive) return;
+        StartCoroutine(ExecuteVisualScareSequence(type, customUIPanelOverride, soundToPlay, videoToPlay, duration, pauseGame, muteBGM));
     }
 
-    private IEnumerator ExecuteScareSequence(VisualType type, GameObject customUIPanelOverride, AudioClip soundToPlay, VideoClip videoToPlay, float duration, bool pauseGame, bool muteBGM)
+    private IEnumerator ExecuteAudioOnlyQueue(AudioClip soundToPlay, float duration, bool muteBGM)
     {
-        isScaring = true;
+        if (muteBGM && backgroundMusicSource != null && backgroundMusicSource.isPlaying)
+        {
+            backgroundMusicSource.Pause();
+        }
 
-        // 1. SELECT TARGET OVERLAY WINDOW Medium
+        if (jumpscareAudioSource != null && soundToPlay != null)
+        {
+            // Assign clip directly to source instead of using PlayOneShot so .Stop() works reliably
+            jumpscareAudioSource.clip = soundToPlay;
+            jumpscareAudioSource.Play();
+        }
+
+        yield return new WaitForSeconds(duration);
+
+        if (jumpscareAudioSource != null)
+        {
+            jumpscareAudioSource.Stop();
+        }
+
+        if (muteBGM && backgroundMusicSource != null)
+        {
+            backgroundMusicSource.UnPause();
+        }
+
+        activeAudioCoroutine = null;
+    }
+
+    private IEnumerator ExecuteVisualScareSequence(VisualType type, GameObject customUIPanelOverride, AudioClip soundToPlay, VideoClip videoToPlay, float duration, bool pauseGame, bool muteBGM)
+    {
+        isVisualScareActive = true;
+
         GameObject targetUIPanel = null;
         if (type == VisualType.FullscreenImage) targetUIPanel = fullscreenUIPanel;
         else if (type == VisualType.CustomizedAreaImage) targetUIPanel = (customUIPanelOverride != null) ? customUIPanelOverride : customizedUIPanel;
         else if (type == VisualType.VideoClip) targetUIPanel = videoUIPanel;
 
-        // 2. DISABLE PLAYER CONTROLS SEPARATELY (Prevents buffered input glitches)
-        // FIX: Only disable the player controls if pauseGame is actually checked true!
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (pauseGame && player != null)
         {
@@ -69,19 +115,21 @@ public class JumpscareManager : MonoBehaviour
             if (playerMovementScript != null) playerMovementScript.enabled = false;
         }
 
-
-        // 3. MUTE BACKGROUND MUSIC (Optional)
         if (muteBGM && backgroundMusicSource != null && backgroundMusicSource.isPlaying)
         {
             backgroundMusicSource.Pause();
         }
 
-        // 4. ACTIVATE VISUALS & BLAST AUDIO CLIP
+        // If playing a video clip, calculate duration dynamically if set to 0
+        float finalDuration = duration;
         if (type == VisualType.VideoClip && videoPlayerProcessor != null && videoToPlay != null)
         {
             videoPlayerProcessor.clip = videoToPlay;
             targetUIPanel.SetActive(true);
             videoPlayerProcessor.Play();
+
+            // SCRIPT MAGIC: If duration in trigger is 0, match video clip perfectly
+            if (finalDuration <= 0f) finalDuration = (float)videoToPlay.length;
         }
         else if (targetUIPanel != null)
         {
@@ -90,25 +138,16 @@ public class JumpscareManager : MonoBehaviour
 
         if (jumpscareAudioSource != null && soundToPlay != null)
         {
-            jumpscareAudioSource.PlayOneShot(soundToPlay);
+            jumpscareAudioSource.clip = soundToPlay;
+            jumpscareAudioSource.Play();
         }
 
-        // 5. PAUSE THE GLOBAL PHYSICS GAME CLOCK (Optional)
-        if (pauseGame)
-        {
-            Time.timeScale = 0f; // Everything drops to 0 FPS physics calculation
-        }
+        if (pauseGame) Time.timeScale = 0f;
 
-        // 6. DELAY COUNTDOWN (Must use WaitForSecondsRealtime since standard Time clock is frozen!)
-        yield return new WaitForSecondsRealtime(duration);
+        yield return new WaitForSecondsRealtime(finalDuration);
 
-        // 7. RESTORE GLOBAL TIME CLOCK VELOCITIES
-        if (pauseGame)
-        {
-            Time.timeScale = 1f; // Game clock smoothly kicks back into full speed motion
-        }
+        if (pauseGame) Time.timeScale = 1f;
 
-        // 8. TEARDOWN SEQUENCE AND SYSTEM STATE RECOVERY
         if (type == VisualType.VideoClip && videoPlayerProcessor != null)
         {
             videoPlayerProcessor.Stop();
@@ -122,10 +161,8 @@ public class JumpscareManager : MonoBehaviour
             backgroundMusicSource.UnPause();
         }
 
-        // Re-enable input commands seamlessly only if they were disabled
-        if (pauseGame && playerMovementScript != null)
-        {
-            playerMovementScript.enabled = true;
-        }
+        if (pauseGame && playerMovementScript != null) playerMovementScript.enabled = true;
+
+        isVisualScareActive = false;
     }
 }
