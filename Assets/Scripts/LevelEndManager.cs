@@ -111,17 +111,52 @@ public class LevelEndManager : MonoBehaviour
 
         if (nextSceneBuildIndex < SceneManager.sceneCountInBuildSettings)
         {
+            // === SAVE PROGRESS UNLOCK ENGINE ===
+            // Compares and updates the player data tracker so the main menu knows what buttons to wake up!
+            int currentSaveIndex = PlayerPrefs.GetInt("HighestUnlockedLevel", 1);
+            if (nextSceneBuildIndex > currentSaveIndex)
+            {
+                PlayerPrefs.SetInt("HighestUnlockedLevel", nextSceneBuildIndex);
+                PlayerPrefs.Save(); // Locks the value firmly onto your system hard drive disk memory profiles
+            }
+            // ===================================
+
             SceneManager.LoadScene(nextSceneBuildIndex);
-        }
-        else
-        {
-            Debug.LogError("No scene following this one inside your Build Settings list!");
         }
     }
 
     public void GoToHomeMenu()
     {
-        Time.timeScale = 1f;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        StartCoroutine(ExecuteWinMenuHomeFade());
     }
+
+    private IEnumerator ExecuteWinMenuHomeFade()
+    {
+        // 1. Fetch active canvas tracking references
+        if (GameManager.Instance != null && GameManager.Instance.fadeCanvasGroup != null)
+        {
+            globalFadeCanvasGroup = GameManager.Instance.fadeCanvasGroup;
+        }
+
+        // 2. Process fade animation layers up to solid darkness
+        if (globalFadeCanvasGroup != null)
+        {
+            float timer = 0f;
+            float duration = GameManager.Instance != null ? GameManager.Instance.fadeDuration : 0.5f;
+            while (timer < duration)
+            {
+                timer += Time.unscaledDeltaTime;
+                globalFadeCanvasGroup.alpha = timer / duration;
+                yield return null;
+            }
+            globalFadeCanvasGroup.alpha = 1f;
+        }
+
+        yield return new WaitForSecondsRealtime(0.1f);
+
+        // 3. Clear clocks and route back home
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(0);
+    }
+
 }
