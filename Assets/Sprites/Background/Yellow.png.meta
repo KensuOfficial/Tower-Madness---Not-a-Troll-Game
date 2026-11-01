@@ -1,11 +1,11 @@
 fileFormatVersion: 2
-guid: 6efdcf6020a7a0d41b45257fc2593b74
+guid: 4d8c75a4d7dd2a0489270e1058d82128
 AssetOrigin:
   serializedVersion: 1
   productId: 155360
   packageName: Pixel Adventure 1
   packageVersion: 1.0
-  assetPath: Assets/Pixel Adventure 1/Assets/Traps/Sand Mud Ice/Sand Mud Ice (16x6) 1.png
+  assetPath: Assets/Pixel Adventure 1/Assets/Background/Yellow.png
   uploadId: 332803
 TextureImporter:
   internalIDToNameTable: []

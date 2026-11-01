@@ -1,11 +1,11 @@
 fileFormatVersion: 2
-guid: 282fa6659f7eabb4f88d7cd347ae7723
+guid: 248611cc7bb8d85448933cee393ce41e
 AssetOrigin:
   serializedVersion: 1
   productId: 155360
   packageName: Pixel Adventure 1
   packageVersion: 1.0
-  assetPath: Assets/Pixel Adventure 1/Assets/Traps/Rock Head/Idle.png
+  assetPath: Assets/Pixel Adventure 1/Assets/Background/Purple.png
   uploadId: 332803
 TextureImporter:
   internalIDToNameTable: []

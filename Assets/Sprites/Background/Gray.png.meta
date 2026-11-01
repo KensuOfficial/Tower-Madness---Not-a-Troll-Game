@@ -1,26 +1,14 @@
 fileFormatVersion: 2
-guid: 6ed38972fd0f4024c91aca33394d3cdd
+guid: ffc80c129c9aca14c9fb4dbeba0e10d2
 AssetOrigin:
   serializedVersion: 1
   productId: 155360
   packageName: Pixel Adventure 1
   packageVersion: 1.0
-  assetPath: Assets/Pixel Adventure 1/Assets/Traps/Spike Head/Blink (54x52).png
+  assetPath: Assets/Pixel Adventure 1/Assets/Background/Gray.png
   uploadId: 332803
 TextureImporter:
-  internalIDToNameTable:
-  - first:
-      213: 4303423874142921733
-    second: Blink (54x52)_0
-  - first:
-      213: 7370585508839877132
-    second: Blink (54x52)_1
-  - first:
-      213: 18105601139653782
-    second: Blink (54x52)_2
-  - first:
-      213: 4110720337494812178
-    second: Blink (54x52)_3
+  internalIDToNameTable: []
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -62,7 +50,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -155,95 +143,7 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
-    sprites:
-    - serializedVersion: 2
-      name: Blink (54x52)_0
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 0
-        width: 54
-        height: 52
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: bf03bd91a1f05da49a82d8cec006f78e
-      internalID: 4303423874142921733
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Blink (54x52)_1
-      rect:
-        serializedVersion: 2
-        x: 54
-        y: 0
-        width: 54
-        height: 52
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: be9166cb19eae5e4cae0d9d8955ab751
-      internalID: 7370585508839877132
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Blink (54x52)_2
-      rect:
-        serializedVersion: 2
-        x: 108
-        y: 0
-        width: 54
-        height: 52
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 0bd42a8700c588c438b4c4d9ca33e60b
-      internalID: 18105601139653782
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Blink (54x52)_3
-      rect:
-        serializedVersion: 2
-        x: 162
-        y: 0
-        width: 54
-        height: 52
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: e5894c1068d0f5e4d8c65ca99dd164a5
-      internalID: 4110720337494812178
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
+    sprites: []
     outline: []
     customData: 
     physicsShape: []
@@ -257,11 +157,7 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable:
-      Blink (54x52)_0: 4303423874142921733
-      Blink (54x52)_1: 7370585508839877132
-      Blink (54x52)_2: 18105601139653782
-      Blink (54x52)_3: 4110720337494812178
+    nameFileIdTable: {}
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
