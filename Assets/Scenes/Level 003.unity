@@ -124,11 +124,6 @@ Tilemap:
   m_CorrespondingSourceObject: {fileID: 1393657579591566437, guid: bb317611df098da499ab4f42ace19f73, type: 3}
   m_PrefabInstance: {fileID: 5381901468570648558}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &30737648 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 914765937899353691, guid: dc144cb7eadde31449520014fc023856, type: 3}
-  m_PrefabInstance: {fileID: 6425808330610278949}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &75803603
 GameObject:
   m_ObjectHideFlags: 0
@@ -342,6 +337,11 @@ Transform:
   - {fileID: 1163418582}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &204642874 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7037924595998441006, guid: dc144cb7eadde31449520014fc023856, type: 3}
+  m_PrefabInstance: {fileID: 6425808330610278949}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &249123439
 GameObject:
   m_ObjectHideFlags: 0
@@ -667,6 +667,11 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
   m_BlendShapeWeights: []
+--- !u!1 &413138872 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6603613254504456916, guid: dc144cb7eadde31449520014fc023856, type: 3}
+  m_PrefabInstance: {fileID: 6425808330610278949}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &545489656
 GameObject:
   m_ObjectHideFlags: 0
@@ -831,25 +836,10 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
   m_BlendShapeWeights: []
---- !u!1 &635581110 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4208332375604830640, guid: dc144cb7eadde31449520014fc023856, type: 3}
-  m_PrefabInstance: {fileID: 6425808330610278949}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &759881883 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5048598440127855996, guid: dc144cb7eadde31449520014fc023856, type: 3}
-  m_PrefabInstance: {fileID: 6425808330610278949}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &774233144 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8028813330641927408, guid: 3f89d73de530c8043950240d7ef8fde7, type: 3}
   m_PrefabInstance: {fileID: 3196556796942366938}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &809178701 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1466185119552289626, guid: dc144cb7eadde31449520014fc023856, type: 3}
-  m_PrefabInstance: {fileID: 6425808330610278949}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &851592128
 GameObject:
@@ -1004,9 +994,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LevelDoor
   isFinalLevelExit: 1
---- !u!225 &881788184 stripped
-CanvasGroup:
-  m_CorrespondingSourceObject: {fileID: 38608545840667857, guid: dc144cb7eadde31449520014fc023856, type: 3}
+--- !u!1 &866445486 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6086986542758781678, guid: dc144cb7eadde31449520014fc023856, type: 3}
   m_PrefabInstance: {fileID: 6425808330610278949}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &927532875 stripped
@@ -1018,11 +1008,6 @@ Transform:
 Transform:
   m_CorrespondingSourceObject: {fileID: 917137358467802704, guid: 642d79d814c2c184d850dca0fa1c0fd4, type: 3}
   m_PrefabInstance: {fileID: 3883545181608698191}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &962546661 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3529540761464311130, guid: dc144cb7eadde31449520014fc023856, type: 3}
-  m_PrefabInstance: {fileID: 6425808330610278949}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &993755865
 GameObject:
@@ -1061,6 +1046,11 @@ Transform:
   - {fileID: 337891233}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!225 &1003953532 stripped
+CanvasGroup:
+  m_CorrespondingSourceObject: {fileID: 1085079256553294932, guid: dc144cb7eadde31449520014fc023856, type: 3}
+  m_PrefabInstance: {fileID: 6425808330610278949}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1134617143
 GameObject:
   m_ObjectHideFlags: 0
@@ -1322,11 +1312,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8693569885483944679, guid: 55249d41f8d10be4c9d253f8eb19257b, type: 3}
   m_PrefabInstance: {fileID: 6678938809054726179}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1362655880 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7703888600738176662, guid: dc144cb7eadde31449520014fc023856, type: 3}
-  m_PrefabInstance: {fileID: 6425808330610278949}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1457086386
 GameObject:
   m_ObjectHideFlags: 0
@@ -1480,11 +1465,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LevelDoor
   isFinalLevelExit: 0
---- !u!1 &1522474498 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 9119772424036555588, guid: dc144cb7eadde31449520014fc023856, type: 3}
-  m_PrefabInstance: {fileID: 6425808330610278949}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1526490675
 GameObject:
   m_ObjectHideFlags: 0
@@ -1690,6 +1670,11 @@ SpriteRenderer:
 Transform:
   m_CorrespondingSourceObject: {fileID: 6058588115870567678, guid: 64f4255b3d0068c4ea3a0b3205e7da37, type: 3}
   m_PrefabInstance: {fileID: 646789071643163557}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1621840921 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4595232743711375311, guid: dc144cb7eadde31449520014fc023856, type: 3}
+  m_PrefabInstance: {fileID: 6425808330610278949}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &1710506594 stripped
 Transform:
@@ -2170,23 +2155,23 @@ PrefabInstance:
     - target: {fileID: 4041288687794737159, guid: 263e4fab4ed2c264198e96d70c75694e, type: 3}
       propertyPath: scenePauseHUD
       value: 
-      objectReference: {fileID: 759881883}
+      objectReference: {fileID: 413138872}
     - target: {fileID: 4041288687794737159, guid: 263e4fab4ed2c264198e96d70c75694e, type: 3}
       propertyPath: sceneRestartHUD
       value: 
-      objectReference: {fileID: 30737648}
+      objectReference: {fileID: 1621840921}
     - target: {fileID: 4041288687794737159, guid: 263e4fab4ed2c264198e96d70c75694e, type: 3}
       propertyPath: sceneFadeOverlay
       value: 
-      objectReference: {fileID: 881788184}
+      objectReference: {fileID: 1003953532}
     - target: {fileID: 4041288687794737159, guid: 263e4fab4ed2c264198e96d70c75694e, type: 3}
       propertyPath: scenePauseMenuPanel
       value: 
-      objectReference: {fileID: 635581110}
+      objectReference: {fileID: 204642874}
     - target: {fileID: 4041288687794737159, guid: 263e4fab4ed2c264198e96d70c75694e, type: 3}
       propertyPath: sceneLevelCompleteMenu
       value: 
-      objectReference: {fileID: 1522474498}
+      objectReference: {fileID: 866445486}
     - target: {fileID: 5229308570494198098, guid: 263e4fab4ed2c264198e96d70c75694e, type: 3}
       propertyPath: m_Name
       value: LevelSceneConnector
@@ -2288,6 +2273,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2793785259681256007, guid: 4899ef7e29e66b649988450f42ec9144, type: 3}
+      propertyPath: pauseMenuPanel
+      value: 
+      objectReference: {fileID: 204642874}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2304,7 +2293,7 @@ PrefabInstance:
     - target: {fileID: 265494967055341979, guid: cb6fb29106730fb4ba600c6a5b394085, type: 3}
       propertyPath: customUIPanelElement
       value: 
-      objectReference: {fileID: 962546661}
+      objectReference: {fileID: 0}
     - target: {fileID: 3666730513512781795, guid: cb6fb29106730fb4ba600c6a5b394085, type: 3}
       propertyPath: m_Name
       value: JumpscareZone
@@ -2649,11 +2638,11 @@ PrefabInstance:
     - target: {fileID: 6025558693922506578, guid: 93117db86b2c68f41b20c92f03e12787, type: 3}
       propertyPath: videoUIPanel
       value: 
-      objectReference: {fileID: 809178701}
+      objectReference: {fileID: 0}
     - target: {fileID: 6025558693922506578, guid: 93117db86b2c68f41b20c92f03e12787, type: 3}
       propertyPath: fullscreenUIPanel
       value: 
-      objectReference: {fileID: 1362655880}
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -26745,7 +26734,7 @@ PrefabInstance:
     - target: {fileID: 4568914582869254192, guid: 14e1f53afca5069418bc74e9ea9ee811, type: 3}
       propertyPath: fadeCanvasGroup
       value: 
-      objectReference: {fileID: 881788184}
+      objectReference: {fileID: 0}
     - target: {fileID: 4568914582869254192, guid: 14e1f53afca5069418bc74e9ea9ee811, type: 3}
       propertyPath: playerTransform
       value: 
@@ -27137,11 +27126,11 @@ PrefabInstance:
     - target: {fileID: 8886716385182541527, guid: abe7174b50ba6ae43ac341d041aeb218, type: 3}
       propertyPath: globalFadeCanvasGroup
       value: 
-      objectReference: {fileID: 881788184}
+      objectReference: {fileID: 1003953532}
     - target: {fileID: 8886716385182541527, guid: abe7174b50ba6ae43ac341d041aeb218, type: 3}
       propertyPath: levelCompleteOptionsMenu
       value: 
-      objectReference: {fileID: 1522474498}
+      objectReference: {fileID: 0}
     - target: {fileID: 9130369564640782578, guid: abe7174b50ba6ae43ac341d041aeb218, type: 3}
       propertyPath: m_Name
       value: LevelEndSystem

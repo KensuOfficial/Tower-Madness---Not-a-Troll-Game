@@ -2885,7 +2885,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: '-- Development Team --
+  m_Text: 'Daniel Ceejay-- Development Team --
 
 
     Team Leader: Jovily Ann Pagaduan
@@ -2902,9 +2902,9 @@ MonoBehaviour:
     Denver Trinidad
 
 
-    Q&A: Caranza
+    Q&A: Daniel Ceejay Caranza
 
-    Wildcard: Carl Beloso'
+    Wildcard: Carl Vincent Beloso'
 --- !u!222 &1166350401
 CanvasRenderer:
   m_ObjectHideFlags: 0
